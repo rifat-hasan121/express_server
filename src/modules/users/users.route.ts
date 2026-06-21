@@ -6,13 +6,13 @@ const router = express.Router();
 
 router.post('/', userController.createUser);
 
-router.get('/', auth(), userController.getUser);
+router.get('/', auth('Admin'), userController.getUser);
 
-router.get('/:id', userController.getSingleUser);
+router.get('/:id', auth('Admin', 'User'), userController.getSingleUser);
 
-router.put('/:id', userController.updateUser);
+router.put('/:id', auth('Admin', 'User'), userController.updateUser);
 
-router.delete('/:id', userController.deleteUser);
+router.delete('/:id', auth('Admin'), userController.deleteUser);
 
 
 export const usersRoute= router;

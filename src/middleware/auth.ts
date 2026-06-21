@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express"
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config";
 
-const auth = () => {
+const auth = (...roles:string[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const token = req.headers.authorization;
 
@@ -15,7 +15,15 @@ const auth = () => {
 
         try {
             const decodedToken = jwt.verify(token, config.jwtSecret as string) as JwtPayload;
+            console.log(decodedToken);
             req.user = decodedToken;
+
+            if (roles.length && !roles.includes(decodedToken.role)) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You don't have permission to access this route",
+                })
+            }
             next();
         } catch (error: any) {
             return res.status(401).json({
